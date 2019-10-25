@@ -4,7 +4,7 @@
   "description": "wsecu practical test",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cucumber-js"
   },
   "repository": {
     "type": "git",
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/RobbyXPS/WSECU#readme",
   "dependencies": {
     "selenium-webdriver": "^4.0.0-alpha.5"
+  },
+  "devDependencies": {
+    "cucumber": "^6.0.2"
   }
 }
