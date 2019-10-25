@@ -1,7 +1,9 @@
 const { Builder, By, Key, until } = require("selenium-webdriver");
 
-async function main() {
-  let driver = await new Builder().forBrowser("firefox").build();
+async function main(browser) {
+  const myBrowser = browser;
+
+  let driver = await new Builder().forBrowser(`${myBrowser}`).build();
 
   await driver.get("http://www.google.com/ncr");
 
@@ -11,4 +13,6 @@ async function main() {
   await driver.wait(until.titleIs("webdriver - Google Search"), 1000);
   await driver.quit();
 }
-main();
+
+main("firefox");
+//main("chrome");
