@@ -2,7 +2,6 @@ const assert = require("assert");
 const { Given, When, Then } = require("cucumber");
 const { until, By, element } = require("selenium-webdriver");
 const webdriver = require("selenium-webdriver");
-const OnlineBankingPage = require("../shared-objects/page_objects/online_banking");
 
 Given("I am on the {string} page", async function(page) {
   // assertion vars
@@ -62,6 +61,7 @@ Given("I log in with an {string} user", async function(username_type) {
   // add page object logic here
   switch (username_type) {
     case "invalid":
+      this.failed_login = true;
       username = this.userData.invalid_user.username;
 
       //await this.driver.sleep(4000);
@@ -71,6 +71,12 @@ Given("I log in with an {string} user", async function(username_type) {
       });
       await input_element.sendKeys(username);
 
+      await this.driver.wait(
+        until.elementLocated(By.css("input[value='Sign In']")),
+        4000
+      );
+
+      await this.driver.sleep(1000);
       var button_element = await this.driver.findElement({
         css: "input[value='Sign In']"
       });
@@ -95,24 +101,34 @@ Given("I log in with an {string} user", async function(username_type) {
 
 Given("I see the {string} page", async function(page) {
   var mypage;
+  console.log("consol", this.failed_login);
 
   switch (page) {
     case "online banking":
-      mypage = await new OnlineBankingPage(webdriver, this.driver);
-
       actual = await this.driver.getTitle().then(function(returnedData) {
         return returnedData;
       });
-      expected = mypage.pageTitle;
 
-      var testytest = await mypage.getCurrentTitle();
-      await console.log("testytest", testytest);
+      const pageTitle = "Sign in to Online Banking";
+      expected = pageTitle;
 
       await assert.equal(
         actual,
         expected,
         `The expected ${page} page title of ${expected} did not match the actual title of ${actual}.`
       );
+
+      if (this.failed_login) {
+        let thing = await this.driver.wait(
+          until.elementLocated(By.id("widget-wsecu-login-ng-3045441-username")),
+          10000
+        );
+
+        var one = await thing.getAttribute("value");
+
+        console.log("hey2", one);
+      }
+
       break;
     default:
       actual = page;
