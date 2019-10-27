@@ -5,5 +5,5 @@ Feature: Log in to WSECU.org
         Given I am on the "landing" page
         When I log in with an "invalid" user
         Then I see the "online banking" page
-#And the "username" field contains "the submitted username"
-#And the "password" field is in focus
+        And the input fields have been auto-populated
+
