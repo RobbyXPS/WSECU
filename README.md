@@ -9,3 +9,4 @@ QA Automation Engineer Practical Test
 # Next todos
 
 // TODO (reast): Pull data from spreadsheet instead of data object
+// TODO (reast): Make page locators more dynamic and not default to className in parent class

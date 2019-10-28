@@ -14,4 +14,6 @@ Feature: Log in
     #And I see the input fields have been auto-populated
 
     Scenario: User attempts to log in from online banking page
-        Given I am on the "page object test" page
+        Given testing I am the "online banking" page
+
+

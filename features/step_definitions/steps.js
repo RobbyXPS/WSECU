@@ -2,11 +2,36 @@ const assert = require("assert");
 const { Given, When, Then } = require("cucumber");
 const { until, By } = require("selenium-webdriver");
 //const webdriver = require("selenium-webdriver");
-const BasePage = require("../shared-objects/page_objects/base");
+//const BasePage = require("../shared-objects/page_objects/base");
+// TODO (reast): remove page ref once pagecreator is working
 const LandingPage = require("../shared-objects/page_objects/landing");
+const BankingSigninPage = require("../shared-objects/page_objects/banking_signin");
+const PageCreator = require("../support/page_creator");
+const AssertHelpers = require("../support/assertion_helpers");
+
+Given("testing I am the {string} page", { timeout: 10 * 5000 }, async function(
+  pageRef
+) {
+  // set world page context if later steps need it
+  this.page = pageRef;
+
+  // create the page object based off the human readable string
+  var page = await PageCreator(this.driver, this.page);
+
+  // load the page
+  await page.navigateTo();
+  await page.getCurrentTitle();
+
+  // verify that you are on the correct page
+  await AssertHelpers.assertTitle(
+    this.page,
+    await page.getCurrentTitle(),
+    page.pageTitle
+  );
+});
 
 Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
-  page
+  pageRef
 ) {
   // instantiate assertion vars
   var actual;
@@ -16,10 +41,30 @@ Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
   var pageUrl;
   var pageLocator;
 
+  var page;
+
   // set page context if other steps need it
-  this.page = page;
+  this.page = pageRef;
 
   switch (this.page) {
+    /*
+    case "page object test 2":
+      // Todo (reast): Turn into proper page factory
+      if (this.page === "page object test 2") {
+        console.log("in if");
+        page = await new LandingPage(this.driver);
+      } else if (this.page === "page object test") {
+        console.log("in if else");
+        page = await new BasePage(this.driver);
+      } else {
+        console.log(
+          "in else"
+        )`There is no page defined as ${this.page}. Add it to the step definition or choose another.`;
+      }
+      page.navigateTo();
+
+      break;
+      */
     case "page object test":
       this.LandingPage = await new LandingPage(this.driver);
       await this.LandingPage.navigateTo();
