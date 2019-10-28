@@ -1,6 +1,9 @@
 const assert = require("assert");
 const { Given, When, Then } = require("cucumber");
 const { until, By } = require("selenium-webdriver");
+//const webdriver = require("selenium-webdriver");
+const BasePage = require("../shared-objects/page_objects/base");
+const LandingPage = require("../shared-objects/page_objects/landing");
 
 Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
   page
@@ -17,6 +20,25 @@ Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
   this.page = page;
 
   switch (this.page) {
+    case "page object test":
+      this.LandingPage = await new LandingPage(this.driver);
+      await this.LandingPage.navigateTo();
+
+      // set assertion vars
+      actual = await this.LandingPage.url();
+      expected = await this.LandingPage.pageTitle;
+      await console.log("mine1", actual);
+      await console.log("mine2", expected);
+
+      // verify the correct page is loaded
+      await assert.equal(
+        actual,
+        expected,
+        `The expected ${page} page title of '${expected}' did not match the actual title of '${actual}'.`
+      );
+
+      break;
+
     case "landing":
       // page title
       pageTitle = "The Credit Union for Washington | WSECU";
