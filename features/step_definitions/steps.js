@@ -9,7 +9,7 @@ const BankingSigninPage = require("../shared-objects/page_objects/banking_signin
 const PageCreator = require("../support/page_creator");
 const AssertHelpers = require("../support/assertion_helpers");
 
-Given("testing I am the {string} page", { timeout: 10 * 5000 }, async function(
+Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
   pageRef
 ) {
   // set world page context if later steps need it
@@ -28,124 +28,6 @@ Given("testing I am the {string} page", { timeout: 10 * 5000 }, async function(
     await page.getCurrentTitle(),
     page.pageTitle
   );
-});
-
-Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
-  pageRef
-) {
-  // instantiate assertion vars
-  var actual;
-  var expected;
-  // instantiate page vars
-  var pageTitle;
-  var pageUrl;
-  var pageLocator;
-
-  var page;
-
-  // set page context if other steps need it
-  this.page = pageRef;
-
-  switch (this.page) {
-    /*
-    case "page object test 2":
-      // Todo (reast): Turn into proper page factory
-      if (this.page === "page object test 2") {
-        console.log("in if");
-        page = await new LandingPage(this.driver);
-      } else if (this.page === "page object test") {
-        console.log("in if else");
-        page = await new BasePage(this.driver);
-      } else {
-        console.log(
-          "in else"
-        )`There is no page defined as ${this.page}. Add it to the step definition or choose another.`;
-      }
-      page.navigateTo();
-
-      break;
-      */
-    case "page object test":
-      this.LandingPage = await new LandingPage(this.driver);
-      await this.LandingPage.navigateTo();
-
-      // set assertion vars
-      actual = await this.LandingPage.url();
-      expected = await this.LandingPage.pageTitle;
-      await console.log("mine1", actual);
-      await console.log("mine2", expected);
-
-      // verify the correct page is loaded
-      await assert.equal(
-        actual,
-        expected,
-        `The expected ${page} page title of '${expected}' did not match the actual title of '${actual}'.`
-      );
-
-      break;
-
-    case "landing":
-      // page title
-      pageTitle = "The Credit Union for Washington | WSECU";
-      // page url
-      pageUrl = "https://wsecu.org/";
-      // page locator
-      pageLocator = "hero-container";
-
-      // wait for page to load
-      await this.driver.get(pageUrl);
-      await this.driver.wait(
-        until.elementLocated(By.className(pageLocator)),
-        4000
-      );
-
-      // set assertion vars
-      actual = await this.driver.getTitle();
-      expected = pageTitle;
-
-      // verify the correct page is loaded
-      await assert.equal(
-        actual,
-        expected,
-        `The expected ${page} page title of ${expected} did not match the actual title of ${actual}.`
-      );
-      break;
-    case "online banking":
-      // page title
-      pageTitle = "Sign in to Online Banking";
-      // page url
-      pageUrl = "https://digital.wsecu.org/banking/signin";
-      // page locator
-      pageLocator = "widget-wsecu-login-ng-3045441";
-
-      // wait for page to load
-      await this.driver.get(pageUrl);
-      await this.driver.wait(
-        until.elementLocated(By.css(`div[data-pid=${pageLocator}]`)),
-        4000
-      );
-
-      // set assertion vars
-      actual = await this.driver.getTitle();
-      expected = pageTitle;
-
-      // verify the correct page is loaded
-      await assert.equal(
-        actual,
-        expected,
-        `The expected ${page} page title of ${expected} did not match the actual title of ${actual}.`
-      );
-      break;
-    default:
-      // throw a helpful error if the user has tried to use the step with a page it doesn't support yet
-      actual = this.page;
-      expected = undefined;
-      await assert.equal(
-        actual,
-        expected,
-        `There is no page defined as ${page}. Add it to the step definition or choose another.`
-      );
-  }
 });
 
 When("I log in with an {string} user", { timeout: 10 * 5000 }, async function(
