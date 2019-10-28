@@ -2,23 +2,28 @@ const assert = require("assert");
 const { Given, When, Then } = require("cucumber");
 const { until, By } = require("selenium-webdriver");
 
-Given("I am on the {string} page", async function(page) {
-  // assertion vars
+Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
+  page
+) {
+  // instantiate assertion vars
   var actual;
   var expected;
+  // instantiate page vars
+  var pageTitle;
+  var pageUrl;
+  var pageLocator;
 
-  // hook this up to page object factory later
+  // set page context if other steps need it
   this.page = page;
 
   switch (this.page) {
     case "landing":
-      // define vars that will be put in page object later
       // page title
-      const pageTitle = "The Credit Union for Washington | WSECU";
+      pageTitle = "The Credit Union for Washington | WSECU";
       // page url
-      const pageUrl = "https://wsecu.org/";
+      pageUrl = "https://wsecu.org/";
       // page locator
-      const pageLocator = "hero-container";
+      pageLocator = "hero-container";
 
       // wait for page to load
       await this.driver.get(pageUrl);
@@ -28,9 +33,7 @@ Given("I am on the {string} page", async function(page) {
       );
 
       // set assertion vars
-      actual = await this.driver.getTitle().then(function(returnedData) {
-        return returnedData;
-      });
+      actual = await this.driver.getTitle();
       expected = pageTitle;
 
       // verify the correct page is loaded
@@ -41,26 +44,23 @@ Given("I am on the {string} page", async function(page) {
       );
       break;
     case "online banking":
-      // define vars that will be put in page object later
       // page title
-      const pageTitle2 = "Sign in to Online Banking";
+      pageTitle = "Sign in to Online Banking";
       // page url
-      const pageUrl2 = "https://digital.wsecu.org/banking/signin";
+      pageUrl = "https://digital.wsecu.org/banking/signin";
       // page locator
-      const pageLocator2 = "widget-wsecu-login-ng-3045441";
+      pageLocator = "widget-wsecu-login-ng-3045441";
 
       // wait for page to load
-      await this.driver.get(pageUrl2);
+      await this.driver.get(pageUrl);
       await this.driver.wait(
-        until.elementLocated(By.css(`div[data-pid=${pageLocator2}]`)),
+        until.elementLocated(By.css(`div[data-pid=${pageLocator}]`)),
         4000
       );
 
       // set assertion vars
-      actual = await this.driver.getTitle().then(function(returnedData) {
-        return returnedData;
-      });
-      expected = pageTitle2;
+      actual = await this.driver.getTitle();
+      expected = pageTitle;
 
       // verify the correct page is loaded
       await assert.equal(
@@ -70,7 +70,8 @@ Given("I am on the {string} page", async function(page) {
       );
       break;
     default:
-      actual = page;
+      // throw a helpful error if the user has tried to use the step with a page it doesn't support yet
+      actual = this.page;
       expected = undefined;
       await assert.equal(
         actual,
@@ -80,76 +81,81 @@ Given("I am on the {string} page", async function(page) {
   }
 });
 
-When("I log in with an {string} user", async function(username_type) {
+When("I log in with an {string} user", { timeout: 10 * 5000 }, async function(
+  username_type
+) {
+  // instantiate assertion vars
   var actual;
   var expected;
-  console.log("right here yo", this.page);
 
+  // set user state for invalid user tests
   if (username_type === "invalid") {
     this.failed_login = true;
     this.username = this.userData.invalid_user.username;
+    this.password = this.userData.invalid_user.password;
   }
 
-  //var username;
-
-  // need to check if page is active from previous step before doing more
-  // add page object logic here
   switch (this.page) {
     case "landing":
-      var input_element = await this.driver.findElement({
+      // fill out the username field
+      await this.driver.wait(
+        until.elementLocated(By.css("#digital-banking-username")),
+        4000
+      );
+      var username_field = await this.driver.findElement({
         css: "#digital-banking-username"
       });
-      await input_element.sendKeys(this.username);
+      await username_field.sendKeys(this.username);
 
+      // click the sign in button
       await this.driver.wait(
         until.elementLocated(By.css("input[value='Sign In']")),
         4000
       );
-
-      await this.driver.sleep(1000);
-      var button_element = await this.driver.findElement({
+      var sign_in_button = await this.driver.findElement({
         css: "input[value='Sign In']"
       });
+      await sign_in_button.click();
 
-      await button_element.click();
-
+      // set world state signifying a redirect happened, future steps need to know this
       this.previous_page_redirect = true;
-
       break;
     case "online banking":
-      console.log("online bankings");
-      await this.driver.sleep(1000);
+      // wait for the loading animation to finish before proceeding
+      async function waitForLoader(driver) {
+        var i = 0;
+        var isVisible;
+        do {
+          var isVisible = await driver
+            .wait(until.elementLocated(By.className("loader")), 4000)
+            .isDisplayed();
+          i++;
+          // the anmiation still needs a second to disapear after the attribute returns false
+          await driver.sleep(1000);
+        } while (i < 100 && isVisible === true);
+      }
+      await waitForLoader(this.driver);
 
-      var input_element = await this.driver.findElement({
+      // fill out the username field
+      await this.driver.wait(
+        until.elementLocated(By.css("input[name='username']")),
+        4000
+      );
+      var username_field = await this.driver.findElement({
         css: "input[name='username']"
       });
-      //await this.driver.sleep(1000);
-      //await input_element.click();
-      await input_element.sendKeys(this.username);
-      //await this.driver.sleep(1000);
+      await username_field.sendKeys(this.username);
 
-      console.log("end of username");
-
-      var input_element_password = await this.driver.findElement({
+      // fill out the password field
+      var password_field = await this.driver.findElement({
         css: "input[name='password']"
       });
-
-      //await this.driver.sleep(1000);
-      //await input_element_password.click();
-      //await this.driver.sleep(1000);
-      await input_element_password.sendKeys(this.username);
-      //await this.driver.sleep(1000);
-
-      console.log("end of password");
-
+      await password_field.sendKeys(this.password);
       var sign_in_button = await this.driver.findElement({
         css: "button[type='submit']"
       });
-
       await sign_in_button.click();
-
       break;
-
     default:
       actual = username_type;
       expected = undefined;
@@ -189,7 +195,7 @@ Then("I see the {string} page", async function(page) {
       );
   }
 
-  await this.driver.sleep(3000);
+  //await this.driver.sleep(3000);
 
   //console.log("work?", superpage.pageTitle);
 
@@ -209,7 +215,7 @@ Then("I see the input fields have been auto-populated", async function() {
     );
     var username_field_expected_value = this.username;
 
-    console.log("username_field_current_value", username_field_current_value);
+    //console.log("username_field_current_value", username_field_current_value);
 
     //check to make sure input field is set to what was entered earlier
     await assert.equal(
@@ -246,7 +252,7 @@ Then("I see the input fields have been auto-populated", async function() {
 
       //    console.log("uhhh", testy2);
 
-      console.log("password_field_current_value", password_field_current_value);
+      //      console.log("password_field_current_value", password_field_current_value);
       var current_focused = currently_focused_input_name;
       var expected_focused = "password";
 
@@ -261,25 +267,25 @@ Then("I see the input fields have been auto-populated", async function() {
 });
 
 Then("I see an error message", async function() {
-  console.log("this.page", this.page);
+  //console.log("this.page", this.page);
   var actual;
   var expected;
-  console.log("before switch");
+  //console.log("before switch");
   switch (this.page) {
     case "online banking":
-      console.log("top");
+      //console.log("top");
 
-      await this.driver.sleep(2000);
+      //await this.driver.sleep(2000);
 
       let error_message = await this.driver.wait(
         //until.elementLocated(By.className("login-alert-dialog")),
         until.elementLocated(By.css(".login-alert-dialog div")),
         5000
       );
-      console.log("123", error_message);
+      //console.log("123", error_message);
 
       let temp = await error_message.getText();
-      console.log("345", temp);
+      //console.log("345", temp);
 
       let actual1 = temp;
       let expected1 = "Sorry, incorrect username.";
@@ -292,7 +298,7 @@ Then("I see an error message", async function() {
 
       break;
     default:
-      console.log("default");
+      //console.log("default");
       assert.fail(
         "This step requires a prior step to set the page context. No page has been defined yet."
       );
