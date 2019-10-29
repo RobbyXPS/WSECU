@@ -5,12 +5,12 @@ This is a simple test framework built with Node/JavaScript, Selenium, and Cucumb
 # Steps to run tests
 
 1. Download Node.js/NPM on your machine
-   https://blog.teamtreehouse.com/install-node-js-npm-windows
-   https://blog.teamtreehouse.com/install-node-js-npm-mac
+   - https://blog.teamtreehouse.com/install-node-js-npm-windows
+   - https://blog.teamtreehouse.com/install-node-js-npm-mac
 2. Clone test repository
 3. Add the webdriver to your path
-   3a. The firefox driver can be found in the repro at features/drivers/geckodriver
-   3b. Edit your .bash_profile or .zshrc file. Add export to your path. (e.g. `export PATH=$PATH:/Users/reast/development/interview_tests/WSECU/features/drivers`)
+   - 3a. The firefox driver can be found in the repro at features/drivers/geckodriver
+   - 3b. Edit your .bash_profile or .zshrc file. Add export to your path. (e.g. `export PATH=$PATH:/Users/reast/development/interview_tests/WSECU/features/drivers`)
 4. run `npm install`
 5. run `npm run test`
 
