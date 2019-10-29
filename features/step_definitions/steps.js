@@ -30,34 +30,11 @@ Given("I am on the {string} page", { timeout: 3 * 5000 }, async function(
   );
 });
 
-When(
-  "testing I log in with an {string} user",
-  { timeout: 10 * 5000 },
-  async function(username_type) {
-    // set user state for invalid user tests
-    if (username_type === "invalid") {
-      this.failed_login = true;
-      this.username = this.userData.invalid_user.username;
-      this.password = this.userData.invalid_user.password;
-    }
-
-    // create the page object based off the human readable string
-    var page = await PageCreator(this.driver, this.page);
-
-    // login from this page
-    await page.logIn(this.username, this.password);
-
-    // set world state signifying a redirect happened, future steps need to know this
-    this.previous_page_redirect = true;
-  }
-);
-
 When("I log in with an {string} user", { timeout: 10 * 5000 }, async function(
   username_type
 ) {
-  // instantiate assertion vars
-  var actual;
-  var expected;
+  // check that the user supplied a valid usertype
+  await AssertHelpers.assertUserType(username_type);
 
   // set user state for invalid user tests
   if (username_type === "invalid") {
@@ -66,76 +43,14 @@ When("I log in with an {string} user", { timeout: 10 * 5000 }, async function(
     this.password = this.userData.invalid_user.password;
   }
 
-  switch (this.page) {
-    case "landing":
-      // fill out the username field
-      await this.driver.wait(
-        until.elementLocated(By.css("#digital-banking-username")),
-        4000
-      );
-      var username_field = await this.driver.findElement({
-        css: "#digital-banking-username"
-      });
-      await username_field.sendKeys(this.username);
+  // create the page object based off the human readable string
+  var page = await PageCreator(this.driver, this.page);
 
-      // click the sign in button
-      await this.driver.wait(
-        until.elementLocated(By.css("input[value='Sign In']")),
-        4000
-      );
-      var sign_in_button = await this.driver.findElement({
-        css: "input[value='Sign In']"
-      });
-      await sign_in_button.click();
+  // login from this page
+  await page.logIn(this.username, this.password);
 
-      // set world state signifying a redirect happened, future steps need to know this
-      this.previous_page_redirect = true;
-      break;
-    case "online banking":
-      // wait for the loading animation to finish before proceeding
-      async function waitForLoader(driver) {
-        var i = 0;
-        var isVisible;
-        do {
-          var isVisible = await driver
-            .wait(until.elementLocated(By.className("loader")), 4000)
-            .isDisplayed();
-          i++;
-          // the anmiation still needs a second to disapear after the attribute returns false
-          await driver.sleep(1000);
-        } while (i < 100 && isVisible === true);
-      }
-      await waitForLoader(this.driver);
-
-      // fill out the username field
-      await this.driver.wait(
-        until.elementLocated(By.css("input[name='username']")),
-        4000
-      );
-      var username_field = await this.driver.findElement({
-        css: "input[name='username']"
-      });
-      await username_field.sendKeys(this.username);
-
-      // fill out the password field
-      var password_field = await this.driver.findElement({
-        css: "input[name='password']"
-      });
-      await password_field.sendKeys(this.password);
-      var sign_in_button = await this.driver.findElement({
-        css: "button[type='submit']"
-      });
-      await sign_in_button.click();
-      break;
-    default:
-      actual = username_type;
-      expected = undefined;
-      await assert.equal(
-        actual,
-        expected,
-        `There is no user type of ${username_type}. Add it to the user data object or choose another.`
-      );
-  }
+  // set world state signifying a redirect happened, future steps need to know this
+  this.previous_page_redirect = true;
 });
 
 Then("I see the {string} page", async function(page) {
