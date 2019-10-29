@@ -21,7 +21,7 @@ Then("I see the input fields have been auto-populated", async function() {
     );
   }
 
-  // the only logic we know of for auto-focus is failed login so we will do that check from world object
+  // the only logic we know of for auto-focus is failed login redirect so we will do that check from world object
   if (this.expect_focus_from_redirect) {
     // verify that the password field is focused by default
     await AssertHelpers.assertFocusElementName(

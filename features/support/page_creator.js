@@ -1,5 +1,5 @@
-const LandingPage = require("../shared-objects/page_objects/landing");
-const BankingSigninPage = require("../shared-objects/page_objects/banking_signin");
+const LandingPage = require("../page_objects/landing");
+const BankingSigninPage = require("../page_objects/banking_signin");
 
 async function pageCreator(driver, pageName) {
   switch (pageName) {

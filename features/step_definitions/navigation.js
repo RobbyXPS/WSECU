@@ -2,7 +2,7 @@ const { Given, When, Then } = require("cucumber");
 const PageCreator = require("../support/page_creator");
 const AssertHelpers = require("../support/assertion_helpers");
 
-Given("I am on the {string} page", { timeout: 3 * 5000 }, async function(
+Given("I am on the {string} page", { timeout: 3 * 4000 }, async function(
   pageRef
 ) {
   // set world page context if later steps need it
