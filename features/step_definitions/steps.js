@@ -4,12 +4,12 @@ const { until, By } = require("selenium-webdriver");
 //const webdriver = require("selenium-webdriver");
 //const BasePage = require("../shared-objects/page_objects/base");
 // TODO (reast): remove page ref once pagecreator is working
-const LandingPage = require("../shared-objects/page_objects/landing");
-const BankingSigninPage = require("../shared-objects/page_objects/banking_signin");
+//const LandingPage = require("../shared-objects/page_objects/landing");
+//const BankingSigninPage = require("../shared-objects/page_objects/banking_signin");
 const PageCreator = require("../support/page_creator");
 const AssertHelpers = require("../support/assertion_helpers");
 
-Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
+Given("I am on the {string} page", { timeout: 3 * 5000 }, async function(
   pageRef
 ) {
   // set world page context if later steps need it
@@ -29,6 +29,28 @@ Given("I am on the {string} page", { timeout: 10 * 5000 }, async function(
     page.pageTitle
   );
 });
+
+When(
+  "testing I log in with an {string} user",
+  { timeout: 10 * 5000 },
+  async function(username_type) {
+    // set user state for invalid user tests
+    if (username_type === "invalid") {
+      this.failed_login = true;
+      this.username = this.userData.invalid_user.username;
+      this.password = this.userData.invalid_user.password;
+    }
+
+    // create the page object based off the human readable string
+    var page = await PageCreator(this.driver, this.page);
+
+    // login from this page
+    await page.logIn(this.username, this.password);
+
+    // set world state signifying a redirect happened, future steps need to know this
+    this.previous_page_redirect = true;
+  }
+);
 
 When("I log in with an {string} user", { timeout: 10 * 5000 }, async function(
   username_type

@@ -4,6 +4,7 @@ class BasePage {
   // define page object properties
   constructor(driver) {
     this.driver = driver;
+    this.defaultTimeout = 4000;
     this.pageUrl = "https://youNeedToSetAPageUrl.com/";
     this.pageTitle = "youNeedToSetAPageUrl";
     this.pageLocator = "youNeedToSetAPageLocator";
