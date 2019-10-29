@@ -1,0 +1,25 @@
+{
+  "name": "wsecu_practical_test",
+  "version": "1.0.0",
+  "description": "wsecu practical test",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobbyXPS/WSECU.git"
+  },
+  "author": "robby east",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobbyXPS/WSECU/issues"
+  },
+  "homepage": "https://github.com/RobbyXPS/WSECU#readme",
+  "dependencies": {
+    "selenium-webdriver": "^4.0.0-alpha.5"
+  },
+  "devDependencies": {
+    "cucumber": "^6.0.2"
+  }
+}
