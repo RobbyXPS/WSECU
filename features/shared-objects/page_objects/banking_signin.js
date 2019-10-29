@@ -10,8 +10,13 @@ class BankingSigninPage extends BasePage {
     this.pageLocator = "widget-wsecu-login-ng-3045441";
     this.loader = "loader";
     this.usernameField = "input[name='username']";
+    // Todo (reast): figure out why I can't use element names to get input
+    this.usernameFieldInput = "widget-wsecu-login-ng-3045441-username";
     this.passwordField = "input[name='password']";
+    // Todo (reast): figure out why I can't use element names to get input
+    this.passwordFieldInput = "widget-wsecu-login-ng-3045441-password";
     this.logInButton = "button[type='submit']";
+    this.errorMessage = ".login-alert-dialog div";
   }
 
   // navigates to the url of the specified page object url property & wait for it to load
@@ -50,6 +55,15 @@ class BankingSigninPage extends BasePage {
       .sendKeys(username);
   }
 
+  async getUsernameFieldValue() {
+    return await this.driver
+      .wait(
+        until.elementLocated(By.id(this.usernameFieldInput)),
+        this.defaultTimeout
+      )
+      .getAttribute("value");
+  }
+
   async fillInPassword(password) {
     await this.driver
       .wait(
@@ -58,6 +72,40 @@ class BankingSigninPage extends BasePage {
       )
       .sendKeys(password);
   }
+
+  async getPasswordFieldValue() {
+    return await this.driver
+      .wait(
+        until.elementLocated(By.id(this.passwordFieldInput)),
+        this.defaultTimeout
+      )
+      .getAttribute("value");
+  }
+
+  async getErrorMessage() {
+    return await this.driver
+      .wait(
+        until.elementLocated(By.css(this.errorMessage)),
+        this.defaultTimeout
+      )
+      .getText();
+  }
+  /*
+  async getFocusedElementName() {
+    var currently_focused_input = await this.driver.findElement({
+      css: "input:focus"
+    });
+    var currently_focused_input = await this.driver.findElement({
+      css: "*:focus"
+    });
+    console.log("inside 1", currently_focused_input);
+    var currently_focused_input_name = await currently_focused_input.getAttribute(
+      "name"
+    );
+    console.log("inside 2", currently_focused_input_name);
+    return await currently_focused_input_name;
+  }
+  */
 
   async clickLogInButton() {
     await this.driver
